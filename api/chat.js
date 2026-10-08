@@ -32,7 +32,13 @@ export async function POST(request) {
       );
     }
 
-    return Response.json({ reply: data.output_text || "返答を取得できなかったよ。" });
+    const reply =
+      data?.output
+        ?.flatMap(item => item?.content || [])
+        ?.find(item => item?.type === "output_text")
+        ?.text || "";
+
+    return Response.json({ reply: reply || "返答を取得できなかったよ。" });
   } catch (error) {
     return Response.json(
       { error: error instanceof Error ? error.message : "Unexpected server error" },
