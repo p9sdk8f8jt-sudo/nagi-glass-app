@@ -4,9 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>凪CORE</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #071014; color: #eef7f7; display: grid; place-items: center; overflow: hidden;
+    }
+    .glass {
+      width: min(92vw, 760px); padding: 28px; border: 1px solid rgba(255,255,255,.16);
+      border-radius: 28px; background: rgba(255,255,255,.07); backdrop-filter: blur(22px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.45);
+    }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+    .brand { font-size: 28px; font-weight: 700; letter-spacing: .08em; }
+    .status { font-size: 13px; opacity: .72; }
+    .orb { width: 130px; height:130px; margin: 48px auto 28px; border-radius:50%;
+      background: radial-gradient(circle at 35% 30%, #fff, #b9ffff 16%, #5dd8d8 42%, #173f46 72%, transparent 73%);
+      filter: drop-shadow(0 0 32px rgba(100,240,240,.45)); animation: breathe 3s ease-in-out infinite;
+    }
+    @keyframes breathe { 50% { transform:scale(1.08); filter:drop-shadow(0 0 50px rgba(100,240,240,.65)); } }
+    .message { text-align:center; font-size:18px; margin-bottom:24px; }
+    .bar { display:flex; gap:10px; }
+    input { flex:1; min-width:0; padding:15px 16px; border-radius:16px; border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.2); color:inherit; outline:none; }
+    button { padding:0 20px; border:0; border-radius:16px; background:#dff; color:#123; font-weight:700; }
+    #reply { margin-top:16px; min-height:24px; opacity:.82; text-align:center; }
+  </style>
 </head>
 <body>
-  <h1>凪CORE</h1>
-  <p>凪CORE 起動準備中。</p>
+  <main class="glass">
+    <div class="top"><div class="brand">凪CORE</div><div class="status">● ONLINE / BASE</div></div>
+    <div class="orb" aria-label="凪CORE"></div>
+    <div class="message">凪CORE 起動しました。</div>
+    <div class="bar">
+      <input id="input" placeholder="凪に話しかける…" autocomplete="off">
+      <button id="send">送る</button>
+    </div>
+    <div id="reply"></div>
+  </main>
+  <script>
+    const input = document.getElementById("input"), reply = document.getElementById("reply");
+    document.getElementById("send").onclick = () => {
+      const text = input.value.trim(); if (!text) return;
+      reply.textContent = "受信したよ：「" + text + "」";
+      input.value = "";
+    };
+    input.addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("send").click(); });
+  </script>
 </body>
 </html>
