@@ -1,1 +1,1 @@
-# 凪CORE\n\nシンプルなWebチャットとして再構築した凪CORE。
+# Nagito.\n\nシンプルなWebチャットとして再構築したNagito.
