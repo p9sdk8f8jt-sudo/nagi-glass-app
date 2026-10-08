@@ -1,175 +1,75 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#071014">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="凪CORE">
-  <link rel="manifest" href="/manifest.json">
-  <title>凪CORE</title>
-  <style>
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:#071014;color:#eef7f7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    body{min-height:100svh;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden}
-    .glass{width:min(94vw,760px);height:min(92svh,900px);display:flex;flex-direction:column;padding:clamp(18px,4vw,28px);border:1px solid rgba(255,255,255,.16);border-radius:28px;background:rgba(255,255,255,.07);backdrop-filter:blur(22px);box-shadow:0 24px 80px rgba(0,0,0,.45)}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex:none}
-    .brand{font-size:28px;font-weight:700;letter-spacing:.08em}
-    .status{font-size:12px;opacity:.65}
-    .orb{width:108px;height:108px;flex:none;margin:28px auto 18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#b9ffff 16%,#5dd8d8 42%,#173f46 72%,transparent 73%);filter:drop-shadow(0 0 32px rgba(100,240,240,.45));animation:breathe 3s ease-in-out infinite}
-    @keyframes breathe{50%{transform:scale(1.08);filter:drop-shadow(0 0 50px rgba(100,240,240,.65))}}
-    .message{text-align:center;font-size:17px;margin-bottom:18px;flex:none}
-    .chat{flex:1;min-height:0;display:flex;flex-direction:column}
-    #history{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:6px 2px 12px;scroll-behavior:smooth}
-    .entry{padding:11px 14px;border-radius:18px;white-space:pre-wrap;line-height:1.5;max-width:min(82%,560px);word-break:break-word}
-    .entry.user{align-self:flex-end;background:rgba(25,60,57,.92);border-bottom-right-radius:6px}
-    .entry.assistant{align-self:flex-start;background:rgba(18,33,39,.94);border-bottom-left-radius:6px}
-    .entry small{display:block;opacity:.48;margin-bottom:3px;font-size:10px}
-    .entry.user small{text-align:right}
-    .empty{margin:auto;text-align:center;opacity:.38;font-size:13px}
-    .reply{min-height:24px;margin:4px 2px 8px;white-space:pre-wrap;opacity:.78;font-size:13px;flex:none}
-    .bar{display:flex;gap:9px;flex:none}
-    input{flex:1;min-width:0;padding:14px 15px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.22);color:inherit;outline:none;font-size:16px}
-    input:focus{border-color:rgba(190,255,255,.45)}
-    button{padding:0 18px;border:0;border-radius:16px;background:#dff;color:#123;font-weight:700;font-size:14px}
-    button:disabled{opacity:.55}
-    .actions{display:flex;justify-content:flex-end;margin-top:9px;flex:none}
-    .clear{padding:7px 11px;font-size:11px;background:transparent;color:#aac;border:1px solid rgba(255,255,255,.12)}
-    @media(max-width:520px){
-      body{padding:0}
-      .glass{width:100vw;height:100svh;border-radius:0;border-left:0;border-right:0;padding:18px 14px max(14px,env(safe-area-inset-bottom))}
-      .brand{font-size:24px}.status{font-size:11px}.orb{width:82px;height:82px;margin:18px auto 12px}.message{font-size:15px;margin-bottom:12px}
-      .entry{max-width:88%;padding:10px 12px}.bar{gap:7px}button{padding:0 15px}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="凪CORE">
+<link rel="manifest" href="/manifest.json">
+<title>凪CORE</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0b0d10;color:#f5f7f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{overflow:hidden}
+.app{height:100svh;display:flex;flex-direction:column;max-width:900px;margin:auto;background:#0d1014}
+.header{height:60px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(13,16,20,.94);backdrop-filter:blur(18px)}
+.title{font-size:18px;font-weight:700;letter-spacing:.08em}.online{position:absolute;right:16px;font-size:10px;color:#83e6df;opacity:.8}
+.messages{flex:1;min-height:0;overflow-y:auto;padding:18px 14px 20px;scroll-behavior:smooth}
+.message{display:flex;margin:0 0 13px}.message.user{justify-content:flex-end}.bubble{max-width:min(78%,600px);padding:10px 13px;border-radius:19px;line-height:1.55;white-space:pre-wrap;word-break:break-word;font-size:15px}
+.user .bubble{background:#174f4a;border-bottom-right-radius:5px}.assistant .bubble{background:#1a1f25;border-bottom-left-radius:5px}
+.meta{font-size:9px;opacity:.4;margin-bottom:3px}.user .meta{text-align:right}
+.welcome{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:.9;text-align:center}
+.orb{width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#b9ffff 18%,#58d7d2 45%,#173b42 72%);box-shadow:0 0 40px rgba(100,240,240,.25);animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.06);box-shadow:0 0 55px rgba(100,240,240,.4)}}
+.welcome strong{font-size:17px}.welcome span{font-size:12px;opacity:.45}
+.composer-wrap{flex:none;padding:8px 12px max(10px,env(safe-area-inset-bottom));background:rgba(13,16,20,.96);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)}
+.composer{display:flex;gap:8px;max-width:860px;margin:auto}.input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.1);background:#171b20;color:#fff;border-radius:20px;padding:11px 15px;outline:none;font-size:16px}.input:focus{border-color:rgba(130,230,223,.45)}
+.send{width:44px;height:44px;padding:0;border:0;border-radius:50%;background:#dff;color:#10201f;font-weight:800;font-size:18px}.send:disabled{opacity:.45}
+.tools{max-width:860px;margin:5px auto 0;display:flex;justify-content:flex-end}.clear{border:0;background:transparent;color:#777f87;font-size:10px;padding:3px 5px}
+@media(min-width:901px){.app{box-shadow:0 0 80px rgba(0,0,0,.35);border-left:1px solid rgba(255,255,255,.05);border-right:1px solid rgba(255,255,255,.05)}}
+</style>
 </head>
 <body>
-  <main class="glass">
-    <div class="top">
-      <div class="brand">凪CORE</div>
-      <div class="status">● ONLINE / AI READY</div>
-    </div>
-
-    <div class="orb" aria-label="凪CORE"></div>
-    <div class="message">凪CORE 起動しました。</div>
-
-    <section class="chat">
-      <div id="history" aria-live="polite"></div>
-      <div id="reply" class="reply"></div>
-      <div class="bar">
-        <input id="input" placeholder="凪に話しかける…" autocomplete="off" enterkeyhint="send">
-        <button id="send">送る</button>
-      </div>
-      <div class="actions"><button class="clear" id="clear">履歴を消去</button></div>
-    </section>
-  </main>
-
-  <script>
-    const input=document.getElementById("input");
-    const reply=document.getElementById("reply");
-    const send=document.getElementById("send");
-    const history=document.getElementById("history");
-    const clear=document.getElementById("clear");
-    const STORAGE_KEY="nagi-core-chat-history-v1";
-
-    function loadHistory(){
-      try{
-        const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
-        return Array.isArray(saved)?saved:[];
-      }catch{return[]}
-    }
-
-    function saveHistory(items){
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(items.slice(-100)));
-    }
-
-    function renderHistory(){
-      const items=loadHistory();
-      history.innerHTML="";
-      if(!items.length){
-        const empty=document.createElement("div");
-        empty.className="empty";
-        empty.textContent="ここから凪との会話がはじまる";
-        history.appendChild(empty);
-        return;
-      }
-      for(const item of items){
-        if(!item?.text)continue;
-        const entry=document.createElement("div");
-        entry.className="entry "+(item.role==="user"?"user":"assistant");
-        const label=document.createElement("small");
-        label.textContent=item.role==="user"?"あなた":"凪";
-        const text=document.createElement("div");
-        text.textContent=item.text;
-        entry.append(label,text);
-        history.appendChild(entry);
-      }
-      requestAnimationFrame(()=>history.scrollTop=history.scrollHeight);
-    }
-
-    function addHistory(role,text){
-      const items=loadHistory();
-      items.push({role,text,time:Date.now()});
-      saveHistory(items);
-      renderHistory();
-    }
-
-    async function sendMessage(){
-      const text=input.value.trim();
-      if(!text||send.disabled)return;
-
-      const previousHistory=loadHistory()
-        .filter(item=>
-          (item?.role==="user"||item?.role==="assistant") &&
-          typeof item?.text==="string" &&
-          item.text.trim()
-        )
-        .slice(-20);
-
-      send.disabled=true;
-      input.value="";
-      reply.textContent="凪、考え中…";
-      addHistory("user",text);
-
-      try{
-        const response=await fetch("/api/chat",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({message:text,history:previousHistory})
-        });
-        const data=await response.json();
-        if(!response.ok)throw new Error(data.error||"AI接続に失敗したよ。");
-        reply.textContent="";
-        addHistory("assistant",data.reply);
-      }catch(error){
-        const errorText="AI接続エラー："+error.message;
-        reply.textContent=errorText;
-        addHistory("assistant",errorText);
-      }finally{
-        send.disabled=false;
-        input.focus();
-      }
-    }
-
-    clear.onclick=()=>{
-      if(confirm("この端末に保存された会話履歴を消去する？")){
-        localStorage.removeItem(STORAGE_KEY);
-        reply.textContent="";
-        renderHistory();
-      }
-    };
-
-    send.onclick=sendMessage;
-    input.addEventListener("keydown",e=>{
-      if(e.key==="Enter"&&!e.isComposing)sendMessage();
-    });
-
-    if("serviceWorker"in navigator){
-      navigator.serviceWorker.register("/sw.js").catch(()=>{});
-    }
-
-    renderHistory();
-  </script>
+<main class="app">
+<header class="header"><div class="title">凪CORE</div><div class="online">● ONLINE</div></header>
+<section id="history" class="messages" aria-live="polite"></section>
+<footer class="composer-wrap">
+<form id="form" class="composer">
+<input id="input" class="input" placeholder="凪に話しかける…" autocomplete="off" enterkeyhint="send">
+<button id="send" class="send" type="submit" aria-label="送信">↑</button>
+</form>
+<div class="tools"><button id="clear" class="clear" type="button">会話を消去</button></div>
+</footer>
+</main>
+<script>
+const input=document.getElementById("input"),send=document.getElementById("send"),history=document.getElementById("history"),form=document.getElementById("form"),clear=document.getElementById("clear");
+const STORAGE_KEY="nagi-core-chat-history-v1";
+function load(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");return Array.isArray(x)?x:[]}catch{return[]}}
+function save(x){localStorage.setItem(STORAGE_KEY,JSON.stringify(x.slice(-100)))}
+function render(){
+ const items=load();history.innerHTML="";
+ if(!items.length){history.innerHTML='<div class="welcome"><div class="orb"></div><strong>凪CORE</strong><span>ここから凪との会話がはじまる</span></div>';return}
+ for(const item of items){if(!item?.text)continue;const row=document.createElement("div");row.className="message "+(item.role==="user"?"user":"assistant");const bubble=document.createElement("div");bubble.className="bubble";const meta=document.createElement("div");meta.className="meta";meta.textContent=item.role==="user"?"あなた":"凪";const text=document.createElement("div");text.textContent=item.text;bubble.append(meta,text);row.append(bubble);history.append(row)}
+ requestAnimationFrame(()=>history.scrollTop=history.scrollHeight)
+}
+function add(role,text){const x=load();x.push({role,text,time:Date.now()});save(x);render()}
+async function sendMessage(){
+ const text=input.value.trim();if(!text||send.disabled)return;
+ const previous=load().filter(x=>(x?.role==="user"||x?.role==="assistant")&&typeof x?.text==="string"&&x.text.trim()).slice(-20);
+ send.disabled=true;input.value="";
+ add("user",text);
+ const waiting=document.createElement("div");waiting.className="message assistant";waiting.id="waiting";waiting.innerHTML='<div class="bubble"><div class="meta">凪</div><div>考え中…</div></div>';history.append(waiting);history.scrollTop=history.scrollHeight;
+ try{
+  const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text,history:previous})});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||"AI接続に失敗したよ。");
+  waiting.remove();add("assistant",d.reply);
+ }catch(e){waiting.remove();add("assistant","AI接続エラー："+e.message)}
+ finally{send.disabled=false;input.focus()}
+}
+form.addEventListener("submit",e=>{e.preventDefault();sendMessage()});
+clear.onclick=()=>{if(confirm("この端末に保存された会話を消去する？")){localStorage.removeItem(STORAGE_KEY);render()}};
+if("serviceWorker"in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
+render();
+</script>
 </body>
 </html>
