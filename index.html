@@ -24,7 +24,8 @@
     button { padding:0 20px; border:0; border-radius:16px; background:#dff; color:#123; font-weight:700; }
     button:disabled { opacity:.55; }
     #reply { margin-top:16px; min-height:24px; opacity:.82; text-align:center; white-space:pre-wrap; }
-    #history { margin-top:20px; max-height:42vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+    .history-title { margin-top:22px; margin-bottom:8px; font-size:13px; opacity:.6; }
+    #history { max-height:42vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:2px; }
     .entry { padding:12px 14px; border-radius:14px; white-space:pre-wrap; line-height:1.5; }
     .entry.user { align-self:flex-end; max-width:88%; background:rgba(25,60,57,.8); }
     .entry.assistant { align-self:flex-start; max-width:88%; background:rgba(18,33,39,.9); }
@@ -40,6 +41,7 @@
     <div class="message">凪CORE 起動しました。</div>
     <div class="bar"><input id="input" placeholder="凪に話しかける…" autocomplete="off"><button id="send">送る</button></div>
     <div id="reply"></div>
+    <div class="history-title">会話履歴</div>
     <div id="history" aria-live="polite"></div>
     <div class="actions"><button class="clear" id="clear">履歴を消去</button></div>
   </main>
