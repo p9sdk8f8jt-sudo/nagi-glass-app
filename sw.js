@@ -1,4 +1,4 @@
-const CACHE_NAME = "nagi-core-v2";
+const CACHE_NAME = "nagi-core-v3";
 const APP_SHELL = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", event => {
