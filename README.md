@@ -1,1 +1,1 @@
-# nagi-glass-app
+# 凪CORE\n\nシンプルなWebチャットとして再構築した凪CORE。
