@@ -1,0 +1,10 @@
+{
+  "name": "凪CORE",
+  "short_name": "凪CORE",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071014",
+  "theme_color": "#071014",
+  "lang": "ja",
+  "description": "凪と話せるシンプルなAIアプリ"
+}
