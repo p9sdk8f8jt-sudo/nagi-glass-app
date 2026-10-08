@@ -8,7 +8,7 @@ export async function POST(request) {
     }
 
     if (!process.env.OPENAI_API_KEY) {
-      return Response.json({ error: "OPENAI_API_KEY is not configured" }, { status: 500 });
+      return Response.json({ error: "Vercelの環境変数 OPENAI_API_KEY が設定されていません。" }, { status: 500 });
     }
 
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -18,7 +18,7 @@ export async function POST(request) {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-6-astra",
+        model: "gpt-6-luna",
         input: message,
       }),
     });
@@ -27,7 +27,7 @@ export async function POST(request) {
 
     if (!response.ok) {
       return Response.json(
-        { error: data?.error?.message || "OpenAI API error" },
+        { error: `OpenAI APIエラー: ${data?.error?.message || "認証または権限を確認してください。"}` },
         { status: response.status }
       );
     }
