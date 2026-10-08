@@ -28,12 +28,13 @@
     input { flex:1; min-width:0; padding:15px 16px; border-radius:16px; border:1px solid rgba(255,255,255,.14);
       background:rgba(0,0,0,.2); color:inherit; outline:none; }
     button { padding:0 20px; border:0; border-radius:16px; background:#dff; color:#123; font-weight:700; }
-    #reply { margin-top:16px; min-height:24px; opacity:.82; text-align:center; }
+    button:disabled { opacity:.55; }
+    #reply { margin-top:16px; min-height:24px; opacity:.82; text-align:center; white-space:pre-wrap; }
   </style>
 </head>
 <body>
   <main class="glass">
-    <div class="top"><div class="brand">凪CORE</div><div class="status">● ONLINE / BASE</div></div>
+    <div class="top"><div class="brand">凪CORE</div><div class="status">● ONLINE / AI READY</div></div>
     <div class="orb" aria-label="凪CORE"></div>
     <div class="message">凪CORE 起動しました。</div>
     <div class="bar">
@@ -43,13 +44,41 @@
     <div id="reply"></div>
   </main>
   <script>
-    const input = document.getElementById("input"), reply = document.getElementById("reply");
-    document.getElementById("send").onclick = () => {
-      const text = input.value.trim(); if (!text) return;
-      reply.textContent = "受信したよ：「" + text + "」";
-      input.value = "";
-    };
-    input.addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("send").click(); });
+    const input = document.getElementById("input");
+    const reply = document.getElementById("reply");
+    const send = document.getElementById("send");
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      send.disabled = true;
+      reply.textContent = "凪、考え中…";
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "AI接続に失敗したよ。");
+
+        reply.textContent = data.reply;
+        input.value = "";
+      } catch (error) {
+        reply.textContent = "AI接続エラー：" + error.message;
+      } finally {
+        send.disabled = false;
+        input.focus();
+      }
+    }
+
+    send.onclick = sendMessage;
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") sendMessage();
+    });
   </script>
 </body>
 </html>
