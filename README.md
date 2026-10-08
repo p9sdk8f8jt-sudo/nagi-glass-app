@@ -1,1 +1,1 @@
-# Nagito.\n\nシンプルなWebチャットとして再構築したNagito.
+# Sike.\n\nSike.の試作Webチャット。
