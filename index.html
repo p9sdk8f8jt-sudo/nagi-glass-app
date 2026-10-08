@@ -25,11 +25,12 @@
     button:disabled { opacity:.55; }
     #reply { margin-top:16px; min-height:24px; opacity:.82; text-align:center; white-space:pre-wrap; }
     .history-title { margin-top:22px; margin-bottom:8px; font-size:13px; opacity:.6; }
-    #history { max-height:42vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:2px; }
-    .entry { padding:12px 14px; border-radius:14px; white-space:pre-wrap; line-height:1.5; }
-    .entry.user { align-self:flex-end; max-width:88%; background:rgba(25,60,57,.8); }
-    .entry.assistant { align-self:flex-start; max-width:88%; background:rgba(18,33,39,.9); }
+    #history { max-height:42vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px 2px 4px 0; }
+    .entry { padding:12px 14px; border-radius:18px; white-space:pre-wrap; line-height:1.5; position:relative; }
+    .entry.user { align-self:flex-end; max-width:82%; background:rgba(25,60,57,.9); border-bottom-right-radius:6px; }
+    .entry.assistant { align-self:flex-start; max-width:82%; background:rgba(18,33,39,.92); border-bottom-left-radius:6px; }
     .entry small { display:block; opacity:.55; margin-bottom:4px; font-size:11px; }
+    .entry.user small { text-align:right; }
     .actions { display:flex; justify-content:flex-end; margin-top:10px; }
     .clear { padding:8px 12px; font-size:12px; background:transparent; color:#aac; border:1px solid rgba(255,255,255,.12); }
   </style>
@@ -61,11 +62,7 @@
       reply.textContent="凪、考え中…";
       addHistory("user",text);
       try{
-        const response=await fetch("/api/chat",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({message:text,history:previousHistory})
-        });
+        const response=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text,history:previousHistory})});
         const data=await response.json();
         if(!response.ok)throw new Error(data.error||"AI接続に失敗したよ。");
         reply.textContent=data.reply;
@@ -74,10 +71,7 @@
         const errorText="AI接続エラー："+error.message;
         reply.textContent=errorText;
         addHistory("assistant",errorText);
-      }finally{
-        send.disabled=false;
-        input.focus();
-      }
+      }finally{send.disabled=false;input.focus()}
     }
     clear.onclick=()=>{if(confirm("この端末に保存された会話履歴を消去する？")){localStorage.removeItem(STORAGE_KEY);renderHistory();reply.textContent="履歴を消去したよ。"}};
     send.onclick=sendMessage;
