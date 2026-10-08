@@ -33,7 +33,7 @@ main{flex:1;min-height:0;overflow-y:auto;padding:18px 14px 24px}
 </div>
 </div>
 <script>
-const KEY="nagi-core-chat-history-v1";
+const KEY="sike-chat-history-v1";
 const thread=document.getElementById("thread"),scroll=document.getElementById("scroll"),input=document.getElementById("input"),send=document.getElementById("send");
 function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(x)?x:[]}catch{return[]}}
 function save(x){localStorage.setItem(KEY,JSON.stringify(x.slice(-100)))}
