@@ -2,7 +2,7 @@ import React,{useState} from "react";
 import {SafeAreaView,View,Text,TextInput,Pressable,FlatList,KeyboardAvoidingView,Platform,StyleSheet} from "react-native";
 import {StatusBar} from "expo-status-bar";
 
-const API_URL=process.env.EXPO_PUBLIC_API_URL||"https://YOUR-VERCEL-URL.vercel.app/api/chat";
+const API_URL=process.env.EXPO_PUBLIC_API_URL||"https://nagi-glass-1g3gvdzrz-p9sdk8f8jt-sudo.vercel.app/api/chat";
 
 export default function App(){
  const [message,setMessage]=useState("");
