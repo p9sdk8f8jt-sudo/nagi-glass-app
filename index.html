@@ -50,9 +50,38 @@
     function saveHistory(items){localStorage.setItem(STORAGE_KEY,JSON.stringify(items.slice(-100)))}
     function renderHistory(){history.innerHTML="";for(const item of loadHistory()){const entry=document.createElement("div");entry.className="entry "+item.role;const label=document.createElement("small");label.textContent=item.role==="user"?"あなた":"凪";const text=document.createElement("div");text.textContent=item.text;entry.append(label,text);history.appendChild(entry)}history.scrollTop=history.scrollHeight}
     function addHistory(role,text){const items=loadHistory();items.push({role,text,time:Date.now()});saveHistory(items);renderHistory()}
-    async function sendMessage(){const text=input.value.trim();if(!text||send.disabled)return;send.disabled=true;input.value="";reply.textContent="凪、考え中…";addHistory("user",text);try{const response=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text})});const data=await response.json();if(!response.ok)throw new Error(data.error||"AI接続に失敗したよ。");reply.textContent=data.reply;addHistory("assistant",data.reply)}catch(error){const errorText="AI接続エラー："+error.message;reply.textContent=errorText;addHistory("assistant",errorText)}finally{send.disabled=false;input.focus()}}
+    async function sendMessage(){
+      const text=input.value.trim();
+      if(!text||send.disabled)return;
+      const previousHistory=loadHistory().filter(item=>(item?.role==="user"||item?.role==="assistant")&&typeof item?.text==="string"&&item.text.trim()).slice(-20);
+      send.disabled=true;
+      input.value="";
+      reply.textContent="凪、考え中…";
+      addHistory("user",text);
+      try{
+        const response=await fetch("/api/chat",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({message:text,history:previousHistory})
+        });
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error||"AI接続に失敗したよ。");
+        reply.textContent=data.reply;
+        addHistory("assistant",data.reply);
+      }catch(error){
+        const errorText="AI接続エラー："+error.message;
+        reply.textContent=errorText;
+        addHistory("assistant",errorText);
+      }finally{
+        send.disabled=false;
+        input.focus();
+      }
+    }
     clear.onclick=()=>{if(confirm("この端末に保存された会話履歴を消去する？")){localStorage.removeItem(STORAGE_KEY);renderHistory();reply.textContent="履歴を消去したよ。"}};
-    send.onclick=sendMessage;input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing)sendMessage()});if("serviceWorker"in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});renderHistory();
+    send.onclick=sendMessage;
+    input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing)sendMessage()});
+    if("serviceWorker"in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
+    renderHistory();
   </script>
 </body>
 </html>
