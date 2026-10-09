@@ -1,26 +1,36 @@
-# Sike.
+# Sike. — Growth-ready prototype core
 
 Sike.は、将来の個人AI「Nagi.」へつながる自立型AIの試作コア。
 
-## 現在
-- 会話
-- 会話履歴
-- AIプロバイダ分離
-- 自動Web検索（AIが必要と判断した場合）
+## 方針
+- Sike.は原型として残し、Nagi.試作はコピーから開始する。
+- 経験・振り返り・改善案・実験結果を記録できる土台を先に作る。
+- 記録の蓄積はモデル自体の学習や重み更新とは異なる。
+- 将来の自己改善は、観察 → 仮説 → 実験 → 評価 → 提案のループとして段階的に導入する。
+- コードの自動適用は既定で無効。テスト・バックアップ・復旧を前提にする。
+- APIキーなどの秘密情報をフロントエンドやGitに保存しない。
+
+## 機能
+- 会話・会話履歴
+- AIプロバイダ層の分離
+- 自動Web検索（有効時、モデルが必要と判断した場合）
 - 検索結果の参照元表示
-- 将来のツール追加を前提にした構造
+- `core/memory.js`: 端末内ジャーナル、バックアップ書き出し・復元
+- `core/reflection.js`: 振り返り、改善案、実験結果の記録
+- `core/policy.js`: 変更案のステージングと保護対象の確認
 
 ## 構成
-- core/ — Sike.の人格・エージェント制御
-- providers/ — AIモデル接続層
-- api/ — Web API
-- index.html — UI
+- `core/` — エージェント、設定、記憶、振り返り、変更ポリシー
+- `providers/` — AIモデル接続層
+- `api/` — Web API
+- `index.html` — UI
 
 ## 環境変数
-- OPENAI_API_KEY
-- AI_PROVIDER=openai
-- AI_MODEL=gpt-6-luna
-- AUTO_WEB_SEARCH=true
-- MAX_OUTPUT_TOKENS=1200
+- `OPENAI_API_KEY`
+- `AI_PROVIDER=openai`
+- `AI_MODEL` — APIアカウントで利用可能なモデル名
+- `AUTO_WEB_SEARCH=true|false`
+- `MAX_OUTPUT_TOKENS=1200`
 
-AI_MODELを変更すれば、将来対応する別モデルへ差し替えられる設計。
+## 現時点の制約
+ジャーナルはブラウザの `localStorage` に保存する設計で、同じ端末・同じブラウザ領域に依存する。消去や容量制限に備えて定期的にバックアップする。サーバー側の永続記憶、ローカルモデルへの接続、自律的なコード変更ループ、デプロイ済みUIへの反映は別途実装・検証が必要。
