@@ -32,16 +32,19 @@ const PERSONA = [
   "- 将来、クラウドAIからローカルAIへ交換できる前提で振る舞う。"
 ].join("\n") + "\n\n【固定原則】\n" + SikeIdentity.principles.map((principle) => "- " + principle).join("\n");
 
-function normalizeHistory(history) {
+export function normalizeHistory(history) {
   if (!Array.isArray(history)) return [];
   return history
     .filter(x => (x?.role === "user" || x?.role === "assistant") && typeof (x?.content ?? x?.text) === "string")
+    .map(x => ({ role: x.role, content: String(x.content ?? x.text).trim() }))
+    // Failed API notices are UI diagnostics, not conversational context.
+    .filter(x => x.content && !x.content.startsWith("AI接続エラー：") && !x.content.startsWith("AI接続エラー:"))
     .slice(-SikeConfig.maxHistory)
-    .map(x => ({ role: x.role, content: String(x.content ?? x.text).trim().slice(0, 12000) }));
+    .map(x => ({ role: x.role, content: x.content.slice(0, SikeConfig.maxHistoryChars) }));
 }
 
 export async function runSike({ message, history = [] }) {
-  const cleanMessage = String(message || "").trim().slice(0, 12000);
+  const cleanMessage = String(message || "").trim().slice(0, SikeConfig.maxMessageChars);
   if (!cleanMessage) throw new Error("メッセージを入力してください。");
   if (SikeConfig.provider !== "openai") {
     throw new Error("現在のAIプロバイダは未実装です。AI_PROVIDER=openaiで起動してください。");
