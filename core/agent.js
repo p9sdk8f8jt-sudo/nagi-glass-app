@@ -1,5 +1,6 @@
 import { SikeConfig } from "./config.js";
 import { createOpenAIResponse } from "../providers/openai.js";
+import { SikeIdentity } from "./identity.js";
 
 const PERSONA = [
   "あなたは「Sike.（シーク）」という自立型AIの試作コア。",
@@ -29,7 +30,7 @@ const PERSONA = [
   "【設計思想】",
   "- AIモデルそのものとSike.の人格・記憶・ツール層は分離されている。",
   "- 将来、クラウドAIからローカルAIへ交換できる前提で振る舞う。"
-].join("\n");
+].join("\n") + "\n\n【固定原則】\n" + SikeIdentity.principles.map((principle) => "- " + principle).join("\n");
 
 function normalizeHistory(history) {
   if (!Array.isArray(history)) return [];
