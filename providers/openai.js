@@ -36,6 +36,14 @@ export async function createOpenAIResponse({ model, instructions, input, webSear
   if (!response.ok) {
     const apiMessage = data?.error?.message || "詳細不明のOpenAI APIエラー";
     const apiCode = data?.error?.code || data?.error?.type || "unknown";
+    if (response.status === 429 || /rate_limit/i.test(String(apiCode))) {
+      const retryMatch = apiMessage.match(/try again in ([\dhms.]+)/i);
+      const retryText = retryMatch ? ` 再試行の目安：${retryMatch[1]}。` : " 少し時間をおいてから再試行してね。";
+      const tpmHint = /tokens per min|\bTPM\b/i.test(apiMessage)
+        ? "会話履歴と回答量を抑える設定に見直したよ。"
+        : "短時間にリクエストが集中していないか確認してね。";
+      throw new Error(`OpenAI APIの一時的な利用制限に達したよ。${tpmHint}${retryText}（request_id: ${requestId}）`);
+    }
     throw new Error(`OpenAI APIエラー (HTTP ${response.status}, code: ${apiCode}, request_id: ${requestId}): ${apiMessage}`);
   }
 
@@ -53,7 +61,7 @@ export async function createOpenAIResponse({ model, instructions, input, webSear
         }
       }
     }
-    reply = textParts.join("\\n").trim();
+    reply = textParts.join("\n").trim();
   }
 
   if (!reply) {
