@@ -16,7 +16,7 @@ export function readJournal(storage = globalThis.localStorage) {
 
 export function appendJournal(entry, storage = globalThis.localStorage) {
   const rows = readJournal(storage);
-  const record = { id: makeId(), at: new Date().toISOString(), kind: "experience", ...entry };
+  const record = { ...entry, id: makeId(), at: new Date().toISOString(), kind: entry?.kind || "experience" };
   rows.push(record);
   try {
     storage?.setItem(KEY, JSON.stringify(rows.slice(-MAX_ENTRIES)));
