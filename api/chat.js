@@ -9,7 +9,7 @@ async function executeChat(body) {
     return { status: 200, payload: { reply: result.reply, sources: result.sources || [], core: "sike-agent-v1" } };
   } catch (e) {
     const error = e instanceof Error ? e.message : "Unexpected server error";
-    const httpMatch = error.match(/HTTP (\\d{3})/);
+    const httpMatch = error.match(/HTTP (\d{3})/);
     const upstreamStatus = httpMatch ? Number(httpMatch[1]) : null;
     const status = upstreamStatus && upstreamStatus >= 400 && upstreamStatus <= 599
       ? upstreamStatus
