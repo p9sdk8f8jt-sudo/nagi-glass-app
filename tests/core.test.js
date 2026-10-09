@@ -4,6 +4,8 @@ import { appendJournal, readJournal, exportJournal, importJournal } from "../cor
 import { createGoal, listGoals, updateGoal } from "../core/goals.js";
 import { createChangeRequest, reviewChangeRequest } from "../core/change-manager.js";
 import { describeIdentity } from "../core/identity.js";
+import { normalizeHistory } from "../core/agent.js";
+import { SikeConfig } from "../core/config.js";
 
 function storageMock() {
   const values = new Map();
@@ -53,4 +55,23 @@ test("protected paths cannot be approved automatically", () => {
   assert.equal(request.assessment.safeToStage, false);
   const review = reviewChangeRequest(request.record.id, { approved: true, snapshotReady: true, testsPassed: true }, storage);
   assert.equal(review.record.approved, false);
+});
+
+test("chat history keeps recent context but bounds tokens and ignores API error bubbles", () => {
+  const history = [
+    { role: "user", content: "oldest" },
+    ...Array.from({ length: 12 }, (_, i) => ({ role: i % 2 ? "assistant" : "user", content: String(i).repeat(3000) })),
+    { role: "assistant", content: "AI接続エラー：一時的なエラー" },
+    { role: "system", content: "ignore this role" },
+  ];
+  const normalized = normalizeHistory(history);
+  assert.equal(normalized.length, SikeConfig.maxHistory);
+  assert.ok(normalized.every(x => x.content.length <= SikeConfig.maxHistoryChars));
+  assert.ok(normalized.every(x => !x.content.startsWith("AI接続エラー：")));
+  assert.ok(normalized.every(x => x.role === "user" || x.role === "assistant"));
+});
+
+test("chat history safely handles invalid input", () => {
+  assert.deepEqual(normalizeHistory(null), []);
+  assert.deepEqual(normalizeHistory("not history"), []);
 });
