@@ -1,5 +1,6 @@
 import { appendJournal, readJournal } from "./memory.js";
 import { createImprovementProposal } from "./reflection.js";
+import { listGoals } from "./goals.js";
 
 /**
  * Creates a reviewable learning candidate from recent records.
@@ -11,8 +12,10 @@ export function observeForLearning({ storage = globalThis.localStorage, focus = 
   const errors = recent.filter((x) => x.kind === "error");
   const reflections = recent.filter((x) => x.kind === "reflection");
   const proposals = recent.filter((x) => x.kind === "improvement-proposal" && x.status === "proposed");
+  const activeGoals = listGoals(storage).filter((goal) => goal.status === "active").slice(0, 10);
   const summary = {
     inspected: recent.length,
+    activeGoals: activeGoals.map((goal) => ({ id: goal.id, title: goal.title, successCriteria: goal.successCriteria })),
     errors: errors.length,
     reflections: reflections.length,
     openProposals: proposals.length,
@@ -25,7 +28,9 @@ export function observeForLearning({ storage = globalThis.localStorage, focus = 
     ? "最近のエラー記録を分類し、再現条件と対処法を確認すると信頼性が上がる可能性がある。"
     : reflections.length
       ? "振り返りの評価と理由を比較し、回答の改善パターンを抽出できる可能性がある。"
-      : "会話と行動記録を増やし、改善対象を根拠に基づいて選ぶ必要がある。";
+      : activeGoals.length
+        ? "現在の目標「" + activeGoals[0].title + "」に沿って、必要な記録と成功基準を集める。"
+        : "会話と行動記録を増やし、改善対象を根拠に基づいて選ぶ必要がある。";
   const proposal = createImprovementProposal({
     title: errors.length ? "エラー原因の分類" : "経験記録のパターン分析",
     hypothesis,
