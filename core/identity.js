@@ -27,3 +27,13 @@ export function describeIdentity() {
     boundaries: { ...SikeIdentity.boundaries },
   };
 }
+
+export function describeIdentity() {
+  return {
+    name: SikeIdentity.name,
+    stage: SikeIdentity.stage,
+    purpose: SikeIdentity.purpose,
+    principles: [...SikeIdentity.principles],
+    boundaries: { ...SikeIdentity.boundaries },
+  };
+}
